@@ -1,0 +1,152 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>vpro</groupId>
+	<artifactId>sr</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+<<<<<<< HEAD
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>vpro.sr.SRGUI</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/vpro/sr</outputDirectory>
+							<resources>
+								<resource>
+									<directory>icons</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>rise</groupId>
+			<artifactId>core-utils</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.darkprograms.speech</groupId>
+			<artifactId>java-speech-api</artifactId>
+			<version>1.13.0-SNAPSHOT</version>
+=======
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+	
+    <build>
+	<plugins>
+		<plugin>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.1</version>
+			<configuration>
+				<source>1.8</source>
+				<target>1.8</target>
+			</configuration>
+		</plugin>
+		<plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                    <goal>single</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+        </configuration>
+    </plugin>
+
+	</plugins>
+	</build>
+    
+	
+    <dependencies>
+        <dependency>
+		  <groupId>rise</groupId>
+		  <artifactId>core-utils</artifactId>
+		  <version>1.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>aldebaran</groupId>
+        	<artifactId>naoqi_atom</artifactId>
+        	<version>2.1.4</version>
+        </dependency>
+		<dependency>
+			<groupId>com.github.lkuza2</groupId>
+			<artifactId>java-speech-api</artifactId>
+			<version>v2.02</version>
+>>>>>>> 7c32e1eed7893a95a611d8ed55c910ffca82e94a
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.javaflacencoder</groupId>
+			<artifactId>java-flac-encoder</artifactId>
+			<version>0.3.7</version>
+<<<<<<< HEAD
+		</dependency>
+		<dependency>
+			<groupId>org.swinglabs</groupId>
+			<artifactId>swing-layout</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+	</dependencies>
+=======
+        </dependency>
+    </dependencies>
+>>>>>>> 7c32e1eed7893a95a611d8ed55c910ffca82e94a
+
+</project>

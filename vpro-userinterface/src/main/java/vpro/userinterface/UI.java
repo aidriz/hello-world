@@ -1,0 +1,1154 @@
+/**
+* User Interface
+*
+* @author  ADEM F. IDRIZ
+* @version 1.0
+* @since  2016 - TU Delft
+*/
+package vpro.userinterface;
+
+import rise.core.utils.tecs.Behaviour;
+import rise.core.utils.tecs.EventHandler;
+import rise.core.utils.tecs.LowLevelNaoCommand;
+import rise.core.utils.tecs.TECSClient;
+import rise.core.utils.tecs.riseConstants;
+
+public class UI extends javax.swing.JFrame {
+
+	// public static TECSClient clientTECS = null;
+	public static TECSClient clientTECS;
+
+	private static String clientName = "UserInterface";
+	private static String tecsserver = "127.0.0.1";
+	private static int tecsPort = 9000;
+
+	String newline = System.getProperty("line.separator");
+	String workingDir = System.getProperty("user.dir");
+
+	String icon_play = "play48.png";
+	String icon_playing = "playing48.png";
+	String icon_connect = "connect48.png";
+	String icon_connected = "connected48.png";
+
+	protected boolean finishedEvent = true;
+	protected boolean connectedtoTECS = false;
+
+	public void connectToTECS(String hostIP, String clientName, int port) {
+
+		NotificationsTextArea.append("Connecting to TECS Server - " + tecsserver + ":" + tecsPort + newline);
+		clientTECS = new TECSClient(hostIP, clientName, port);
+
+		if (clientTECS != null) {
+			clientTECS.subscribe(riseConstants.LowLevelNaoCommandMsg, palLLCmdEventHandler);
+
+			clientTECS.startListening();
+			// connectedtoTECS = clientTECS.isConnected();
+			connectedtoTECS = true;
+		}
+
+		if (connectedtoTECS) {
+			NotificationsTextArea.append("Connected to TECS Server " + newline);
+			ConnectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(icon_connected)));
+
+		}
+
+	}
+
+	public void disconnectToTECS() {
+		clientTECS.disconnect();
+		if (clientTECS != null) {
+			connectedtoTECS = false;
+			clientTECS = null;
+		}
+		// connectedtoTECS = clientTECS.isConnected();
+		NotificationsTextArea.append("Disconnected! " + newline);
+		ConnectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(icon_connect)));
+	}
+
+	/* LowLevelNaoCommand Finished Feedback Handling */
+	EventHandler<LowLevelNaoCommand> palLLCmdEventHandler = new EventHandler<LowLevelNaoCommand>() {
+		public void handleEvent(LowLevelNaoCommand event) {
+
+			String cmd = event.getCommand();
+
+			String[] parts = cmd.split(";");
+
+			switch (parts[0]) {
+			case "actualposture":
+
+				break;
+			case "finished":
+
+				finishedEvent = true;
+
+				PlayAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(icon_play)));
+
+				NotificationsTextArea.append("Action is completed." + newline);
+
+				break;
+			case "eyecolor":
+
+				break;
+			case "noiseDetected":
+
+			default:
+
+				break;
+			}
+
+		}
+
+	};
+
+	public void sendBehavior(String gesture, String textToSpeak, double mood) {
+
+		Behaviour b = new Behaviour(102, gesture, textToSpeak).setMood(mood);
+		clientTECS.send(b);
+		NotificationsTextArea.append("Selected Behaviour: " + gesture + " - Text to Speech: " + textToSpeak + newline);
+		NotificationsTextArea.append("Behavior data is transmitted." + newline);
+		NotificationsTextArea.append("Waiting finished feedback..." + newline);
+
+	}
+
+	public String[] reachToTabElements(int Index) {
+		// TODO add your handling code here:
+		Index++;
+		String[] elements = { "", "" };
+		switch (Index) {
+		case 1:
+			elements[0] = BehaviourComboBox1.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea1.getText();
+			break;
+		case 2:
+			elements[0] = BehaviourComboBox2.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea2.getText();
+			break;
+		case 3:
+			elements[0] = BehaviourComboBox3.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea3.getText();
+			break;
+		case 4:
+			elements[0] = BehaviourComboBox4.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea4.getText();
+			break;
+		case 5:
+			elements[0] = BehaviourComboBox5.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea5.getText();
+			break;
+		case 6:
+			elements[0] = BehaviourComboBox6.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea6.getText();
+			break;
+		case 7:
+			elements[0] = BehaviourComboBox7.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea7.getText();
+			break;
+		case 8:
+			elements[0] = BehaviourComboBox8.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea8.getText();
+			break;
+		case 9:
+			elements[0] = BehaviourComboBox9.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea9.getText();
+			break;
+		case 10:
+			elements[0] = BehaviourComboBox10.getSelectedItem().toString();
+			elements[1] = TextToSpeechTextArea10.getText();
+			break;
+		default:
+			break;
+		}
+		return elements;
+	}
+
+	/**
+	 * Creates new form ContactEditor
+	 */
+	public UI() {
+
+		initComponents();
+	}
+
+	/**
+	 * This method is called from within the constructor to initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is always
+	 * regenerated by the Form Editor.
+	 */
+	// <editor-fold defaultstate="collapsed" desc="Generated
+	// Code">//GEN-BEGIN:initComponents
+	private void initComponents() {
+
+		ConnectionPanel = new javax.swing.JPanel();
+		jLabel1 = new javax.swing.JLabel();
+		TECSServerIPAddressTextField = new javax.swing.JTextField();
+		ConnectButton = new javax.swing.JButton();
+		TECSServerPortTextField = new javax.swing.JTextField();
+		jLabel2 = new javax.swing.JLabel();
+		ScenariosPanel = new javax.swing.JPanel();
+		MultiTab = new javax.swing.JTabbedPane();
+		jPanel11 = new javax.swing.JPanel();
+		jLabel9 = new javax.swing.JLabel();
+		BehaviourComboBox1 = new javax.swing.JComboBox();
+		jLabel10 = new javax.swing.JLabel();
+		jScrollPane1 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea1 = new javax.swing.JTextArea();
+		jPanel12 = new javax.swing.JPanel();
+		jLabel11 = new javax.swing.JLabel();
+		BehaviourComboBox2 = new javax.swing.JComboBox();
+		jLabel12 = new javax.swing.JLabel();
+		jScrollPane2 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea2 = new javax.swing.JTextArea();
+		jPanel13 = new javax.swing.JPanel();
+		jLabel13 = new javax.swing.JLabel();
+		BehaviourComboBox3 = new javax.swing.JComboBox();
+		jLabel14 = new javax.swing.JLabel();
+		jScrollPane3 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea3 = new javax.swing.JTextArea();
+		jPanel14 = new javax.swing.JPanel();
+		jLabel15 = new javax.swing.JLabel();
+		BehaviourComboBox4 = new javax.swing.JComboBox();
+		jLabel16 = new javax.swing.JLabel();
+		jScrollPane4 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea4 = new javax.swing.JTextArea();
+		jPanel15 = new javax.swing.JPanel();
+		jLabel17 = new javax.swing.JLabel();
+		BehaviourComboBox5 = new javax.swing.JComboBox();
+		jLabel18 = new javax.swing.JLabel();
+		jScrollPane5 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea5 = new javax.swing.JTextArea();
+		jPanel16 = new javax.swing.JPanel();
+		jLabel19 = new javax.swing.JLabel();
+		BehaviourComboBox6 = new javax.swing.JComboBox();
+		jLabel20 = new javax.swing.JLabel();
+		jScrollPane6 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea6 = new javax.swing.JTextArea();
+		jPanel17 = new javax.swing.JPanel();
+		jLabel21 = new javax.swing.JLabel();
+		BehaviourComboBox7 = new javax.swing.JComboBox();
+		jLabel22 = new javax.swing.JLabel();
+		jScrollPane7 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea7 = new javax.swing.JTextArea();
+		jPanel18 = new javax.swing.JPanel();
+		jLabel23 = new javax.swing.JLabel();
+		BehaviourComboBox8 = new javax.swing.JComboBox();
+		jLabel24 = new javax.swing.JLabel();
+		jScrollPane8 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea8 = new javax.swing.JTextArea();
+		jPanel19 = new javax.swing.JPanel();
+		jLabel25 = new javax.swing.JLabel();
+		BehaviourComboBox9 = new javax.swing.JComboBox();
+		jLabel26 = new javax.swing.JLabel();
+		jScrollPane9 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea9 = new javax.swing.JTextArea();
+		jPanel20 = new javax.swing.JPanel();
+		jLabel27 = new javax.swing.JLabel();
+		BehaviourComboBox10 = new javax.swing.JComboBox();
+		jLabel28 = new javax.swing.JLabel();
+		jScrollPane10 = new javax.swing.JScrollPane();
+		TextToSpeechTextArea10 = new javax.swing.JTextArea();
+		NotificationsPanel = new javax.swing.JPanel();
+		NotificationsTextArea = new java.awt.TextArea();
+		PlayAllButton = new javax.swing.JButton();
+
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		setTitle("User Interface");
+
+		ConnectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Connection",
+				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+				new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+		jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel1.setText("TECS Server Port:");
+
+		TECSServerIPAddressTextField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		TECSServerIPAddressTextField.setText("127.0.0.1");
+		TECSServerIPAddressTextField.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				TECSServerIPAddressTextFieldActionPerformed(evt);
+			}
+		});
+
+		ConnectButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		ConnectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(icon_connect)));
+		ConnectButton.setText("Connect");
+		ConnectButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				ConnectButtonActionPerformed(evt);
+			}
+		});
+
+		TECSServerPortTextField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		TECSServerPortTextField.setText("9000");
+		TECSServerPortTextField.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				TECSServerPortTextFieldActionPerformed(evt);
+			}
+		});
+
+		jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel2.setText("TECS Server IP Address:");
+
+		org.jdesktop.layout.GroupLayout ConnectionPanelLayout = new org.jdesktop.layout.GroupLayout(ConnectionPanel);
+		ConnectionPanel.setLayout(ConnectionPanelLayout);
+		ConnectionPanelLayout.setHorizontalGroup(ConnectionPanelLayout
+				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(ConnectionPanelLayout.createSequentialGroup().addContainerGap()
+						.add(ConnectionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+								.add(jLabel2).add(jLabel1))
+						.add(18, 18, 18)
+						.add(ConnectionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+								.add(TECSServerIPAddressTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 125,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+								.add(TECSServerPortTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 50,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(ConnectButton)
+						.addContainerGap()));
+		ConnectionPanelLayout
+				.setVerticalGroup(ConnectionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+						.add(ConnectionPanelLayout.createSequentialGroup().addContainerGap().add(
+								ConnectionPanelLayout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(
+												ConnectionPanelLayout.createSequentialGroup()
+														.add(ConnectionPanelLayout
+																.createParallelGroup(
+																		org.jdesktop.layout.GroupLayout.BASELINE)
+																.add(jLabel2).add(TECSServerIPAddressTextField,
+																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																		org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+														.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 13,
+																Short.MAX_VALUE)
+														.add(ConnectionPanelLayout
+																.createParallelGroup(
+																		org.jdesktop.layout.GroupLayout.BASELINE)
+																.add(jLabel1).add(TECSServerPortTextField,
+																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																		org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																		org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+										.add(ConnectionPanelLayout.createSequentialGroup()
+												.add(ConnectButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 45,
+														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+												.add(0, 0, Short.MAX_VALUE)))
+								.addContainerGap()));
+
+		ScenariosPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Scenarios",
+				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+				new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+		ScenariosPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+		ScenariosPanel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		ScenariosPanel.setName(""); // NOI18N
+		ScenariosPanel.setOpaque(false);
+
+		MultiTab.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		MultiTab.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentShown(java.awt.event.ComponentEvent evt) {
+				MultiTabComponentShown(evt);
+			}
+		});
+
+		jPanel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel9.setText("Behaviour:");
+
+		BehaviourComboBox1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox1.setSelectedIndex(1);
+		BehaviourComboBox1.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox1ActionPerformed(evt);
+			}
+		});
+
+		jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel10.setText("Text To Speech:");
+
+		TextToSpeechTextArea1.setColumns(20);
+		TextToSpeechTextArea1.setRows(5);
+		TextToSpeechTextArea1.setText("TextArea1\n");
+		jScrollPane1.setViewportView(TextToSpeechTextArea1);
+
+		org.jdesktop.layout.GroupLayout jPanel11Layout = new org.jdesktop.layout.GroupLayout(jPanel11);
+		jPanel11.setLayout(jPanel11Layout);
+		jPanel11Layout.setHorizontalGroup(jPanel11Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel11Layout.createSequentialGroup().addContainerGap().add(jPanel11Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane1).add(
+								jPanel11Layout.createSequentialGroup().add(jPanel11Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel11Layout.createSequentialGroup().add(jLabel9).add(18, 18, 18).add(
+												BehaviourComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel10)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel11Layout.setVerticalGroup(jPanel11Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel11Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel11Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel9)
+								.add(BehaviourComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel10).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#1", jPanel11);
+
+		jPanel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel11.setText("Behaviour:");
+
+		BehaviourComboBox2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox2.setSelectedIndex(2);
+		BehaviourComboBox2.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox2ActionPerformed(evt);
+			}
+		});
+
+		jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel12.setText("Text To Speech:");
+
+		TextToSpeechTextArea2.setColumns(20);
+		TextToSpeechTextArea2.setRows(5);
+		TextToSpeechTextArea2.setText("TextArea2");
+		jScrollPane2.setViewportView(TextToSpeechTextArea2);
+
+		org.jdesktop.layout.GroupLayout jPanel12Layout = new org.jdesktop.layout.GroupLayout(jPanel12);
+		jPanel12.setLayout(jPanel12Layout);
+		jPanel12Layout.setHorizontalGroup(jPanel12Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel12Layout.createSequentialGroup().addContainerGap().add(jPanel12Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane2).add(
+								jPanel12Layout.createSequentialGroup().add(jPanel12Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel12Layout.createSequentialGroup().add(jLabel11).add(18, 18, 18).add(
+												BehaviourComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel12)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel12Layout.setVerticalGroup(jPanel12Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel12Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel12Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel11)
+								.add(BehaviourComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel12).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#2", jPanel12);
+
+		jPanel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel13.setText("Behaviour:");
+
+		BehaviourComboBox3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox3.setSelectedIndex(3);
+		BehaviourComboBox3.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox3ActionPerformed(evt);
+			}
+		});
+
+		jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel14.setText("Text To Speech:");
+
+		TextToSpeechTextArea3.setColumns(20);
+		TextToSpeechTextArea3.setRows(5);
+		TextToSpeechTextArea3.setText("TextArea3");
+		jScrollPane3.setViewportView(TextToSpeechTextArea3);
+
+		org.jdesktop.layout.GroupLayout jPanel13Layout = new org.jdesktop.layout.GroupLayout(jPanel13);
+		jPanel13.setLayout(jPanel13Layout);
+		jPanel13Layout.setHorizontalGroup(jPanel13Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel13Layout.createSequentialGroup().addContainerGap().add(jPanel13Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane3).add(
+								jPanel13Layout.createSequentialGroup().add(jPanel13Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel13Layout.createSequentialGroup().add(jLabel13).add(18, 18, 18).add(
+												BehaviourComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel14)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel13Layout.setVerticalGroup(jPanel13Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel13Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel13Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel13)
+								.add(BehaviourComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel14).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#3", jPanel13);
+
+		jPanel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel15.setText("Behaviour:");
+
+		BehaviourComboBox4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox4.setSelectedIndex(4);
+		BehaviourComboBox4.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox4ActionPerformed(evt);
+			}
+		});
+
+		jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel16.setText("Text To Speech:");
+
+		TextToSpeechTextArea4.setColumns(20);
+		TextToSpeechTextArea4.setRows(5);
+		TextToSpeechTextArea4.setText("TextArea4");
+		jScrollPane4.setViewportView(TextToSpeechTextArea4);
+
+		org.jdesktop.layout.GroupLayout jPanel14Layout = new org.jdesktop.layout.GroupLayout(jPanel14);
+		jPanel14.setLayout(jPanel14Layout);
+		jPanel14Layout.setHorizontalGroup(jPanel14Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel14Layout.createSequentialGroup().addContainerGap().add(jPanel14Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane4).add(
+								jPanel14Layout.createSequentialGroup().add(jPanel14Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel14Layout.createSequentialGroup().add(jLabel15).add(18, 18, 18).add(
+												BehaviourComboBox4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel16)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel14Layout.setVerticalGroup(jPanel14Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel14Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel14Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel15)
+								.add(BehaviourComboBox4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel16).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#4", jPanel14);
+
+		jPanel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel17.setText("Behaviour:");
+
+		BehaviourComboBox5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox5.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox5.setSelectedIndex(5);
+		BehaviourComboBox5.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox5ActionPerformed(evt);
+			}
+		});
+
+		jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel18.setText("Text To Speech:");
+
+		TextToSpeechTextArea5.setColumns(20);
+		TextToSpeechTextArea5.setRows(5);
+		TextToSpeechTextArea5.setText("TextArea5");
+		jScrollPane5.setViewportView(TextToSpeechTextArea5);
+
+		org.jdesktop.layout.GroupLayout jPanel15Layout = new org.jdesktop.layout.GroupLayout(jPanel15);
+		jPanel15.setLayout(jPanel15Layout);
+		jPanel15Layout.setHorizontalGroup(jPanel15Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel15Layout.createSequentialGroup().addContainerGap().add(jPanel15Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane5).add(
+								jPanel15Layout.createSequentialGroup().add(jPanel15Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel15Layout.createSequentialGroup().add(jLabel17).add(18, 18, 18).add(
+												BehaviourComboBox5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel18)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel15Layout.setVerticalGroup(jPanel15Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel15Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel15Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel17)
+								.add(BehaviourComboBox5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel18).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#5", jPanel15);
+
+		jPanel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel19.setText("Behaviour:");
+
+		BehaviourComboBox6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox6.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox6.setSelectedIndex(6);
+		BehaviourComboBox6.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox6ActionPerformed(evt);
+			}
+		});
+
+		jLabel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel20.setText("Text To Speech:");
+
+		TextToSpeechTextArea6.setColumns(20);
+		TextToSpeechTextArea6.setRows(5);
+		TextToSpeechTextArea6.setText("TextArea6");
+		jScrollPane6.setViewportView(TextToSpeechTextArea6);
+
+		org.jdesktop.layout.GroupLayout jPanel16Layout = new org.jdesktop.layout.GroupLayout(jPanel16);
+		jPanel16.setLayout(jPanel16Layout);
+		jPanel16Layout.setHorizontalGroup(jPanel16Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel16Layout.createSequentialGroup().addContainerGap().add(jPanel16Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane6).add(
+								jPanel16Layout.createSequentialGroup().add(jPanel16Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel16Layout.createSequentialGroup().add(jLabel19).add(18, 18, 18).add(
+												BehaviourComboBox6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel20)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel16Layout.setVerticalGroup(jPanel16Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel16Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel16Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel19)
+								.add(BehaviourComboBox6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel20).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#6", jPanel16);
+
+		jPanel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel21.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel21.setText("Behaviour:");
+
+		BehaviourComboBox7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox7.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox7.setSelectedIndex(7);
+		BehaviourComboBox7.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox7ActionPerformed(evt);
+			}
+		});
+
+		jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel22.setText("Text To Speech:");
+
+		TextToSpeechTextArea7.setColumns(20);
+		TextToSpeechTextArea7.setRows(5);
+		TextToSpeechTextArea7.setText("TextArea7");
+		jScrollPane7.setViewportView(TextToSpeechTextArea7);
+
+		org.jdesktop.layout.GroupLayout jPanel17Layout = new org.jdesktop.layout.GroupLayout(jPanel17);
+		jPanel17.setLayout(jPanel17Layout);
+		jPanel17Layout.setHorizontalGroup(jPanel17Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel17Layout.createSequentialGroup().addContainerGap().add(jPanel17Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane7).add(
+								jPanel17Layout.createSequentialGroup().add(jPanel17Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel17Layout.createSequentialGroup().add(jLabel21).add(18, 18, 18).add(
+												BehaviourComboBox7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel22)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel17Layout.setVerticalGroup(jPanel17Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel17Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel17Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel21)
+								.add(BehaviourComboBox7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel22).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#7", jPanel17);
+
+		jPanel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel23.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel23.setText("Behaviour:");
+
+		BehaviourComboBox8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox8.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox8.setSelectedIndex(8);
+		BehaviourComboBox8.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox8ActionPerformed(evt);
+			}
+		});
+
+		jLabel24.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel24.setText("Text To Speech:");
+
+		TextToSpeechTextArea8.setColumns(20);
+		TextToSpeechTextArea8.setRows(5);
+		TextToSpeechTextArea8.setText("TextArea8");
+		jScrollPane8.setViewportView(TextToSpeechTextArea8);
+
+		org.jdesktop.layout.GroupLayout jPanel18Layout = new org.jdesktop.layout.GroupLayout(jPanel18);
+		jPanel18.setLayout(jPanel18Layout);
+		jPanel18Layout.setHorizontalGroup(jPanel18Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel18Layout.createSequentialGroup().addContainerGap().add(jPanel18Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane8).add(
+								jPanel18Layout.createSequentialGroup().add(jPanel18Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel18Layout.createSequentialGroup().add(jLabel23).add(18, 18, 18).add(
+												BehaviourComboBox8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel24)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel18Layout.setVerticalGroup(jPanel18Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel18Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel18Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel23)
+								.add(BehaviourComboBox8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel24).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#8", jPanel18);
+
+		jPanel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel25.setText("Behaviour:");
+
+		BehaviourComboBox9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox9.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox9.setSelectedIndex(9);
+		BehaviourComboBox9.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox9ActionPerformed(evt);
+			}
+		});
+
+		jLabel26.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel26.setText("Text To Speech:");
+
+		TextToSpeechTextArea9.setColumns(20);
+		TextToSpeechTextArea9.setRows(5);
+		TextToSpeechTextArea9.setText("TextArea9");
+		jScrollPane9.setViewportView(TextToSpeechTextArea9);
+
+		org.jdesktop.layout.GroupLayout jPanel19Layout = new org.jdesktop.layout.GroupLayout(jPanel19);
+		jPanel19.setLayout(jPanel19Layout);
+		jPanel19Layout.setHorizontalGroup(jPanel19Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel19Layout.createSequentialGroup().addContainerGap().add(jPanel19Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane9).add(
+								jPanel19Layout.createSequentialGroup().add(jPanel19Layout
+										.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel19Layout.createSequentialGroup().add(jLabel25).add(18, 18, 18).add(
+												BehaviourComboBox9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel26)).add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel19Layout.setVerticalGroup(jPanel19Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel19Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel19Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel25)
+								.add(BehaviourComboBox9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel26).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#9", jPanel19);
+
+		jPanel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		jLabel27.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel27.setText("Behaviour:");
+
+		BehaviourComboBox10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		BehaviourComboBox10.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bow", "First", "FirstMe",
+				"FromAToB", "HeadPose", "HeadRandomScan", "ImitationGestureBot", "LookAround", "Me", "MeAndYou",
+				"Motivate", "NoShakeHead", "Propose", "RArmDOF", "RArmDOFOneByOne", "ShowBiceps", "ShowBody", "ShowMic",
+				"ShowSide", "ShowSonars", "SmallBow", "StandHead", "State", "Think", "XPointing", "XPointingOmni",
+				"XWaving", "YouAndMe" }));
+		BehaviourComboBox10.setSelectedIndex(10);
+		BehaviourComboBox10.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				BehaviourComboBox10ActionPerformed(evt);
+			}
+		});
+
+		jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		jLabel28.setText("Text To Speech:");
+
+		TextToSpeechTextArea10.setColumns(20);
+		TextToSpeechTextArea10.setRows(5);
+		TextToSpeechTextArea10.setText("TextArea10");
+		jScrollPane10.setViewportView(TextToSpeechTextArea10);
+
+		org.jdesktop.layout.GroupLayout jPanel20Layout = new org.jdesktop.layout.GroupLayout(jPanel20);
+		jPanel20.setLayout(jPanel20Layout);
+		jPanel20Layout.setHorizontalGroup(jPanel20Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel20Layout.createSequentialGroup().addContainerGap().add(jPanel20Layout
+						.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(jScrollPane10)
+						.add(jPanel20Layout.createSequentialGroup()
+								.add(jPanel20Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+										.add(jPanel20Layout.createSequentialGroup().add(jLabel27).add(18, 18, 18).add(
+												BehaviourComboBox10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(jLabel28))
+								.add(0, 363, Short.MAX_VALUE)))
+						.addContainerGap()));
+		jPanel20Layout.setVerticalGroup(jPanel20Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(jPanel20Layout.createSequentialGroup().addContainerGap()
+						.add(jPanel20Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(jLabel27)
+								.add(BehaviourComboBox10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+						.add(18, 18, 18).add(jLabel28).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(jScrollPane10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(23, Short.MAX_VALUE)));
+
+		MultiTab.addTab("#10", jPanel20);
+
+		org.jdesktop.layout.GroupLayout ScenariosPanelLayout = new org.jdesktop.layout.GroupLayout(ScenariosPanel);
+		ScenariosPanel.setLayout(ScenariosPanelLayout);
+		ScenariosPanelLayout.setHorizontalGroup(
+				ScenariosPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(MultiTab));
+		ScenariosPanelLayout.setVerticalGroup(
+				ScenariosPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(MultiTab,
+						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 228,
+						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE));
+
+		NotificationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Notifications",
+				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+				new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+		NotificationsPanel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+		NotificationsTextArea.setMinimumSize(new java.awt.Dimension(100, 72));
+		NotificationsTextArea.setPreferredSize(new java.awt.Dimension(100, 78));
+
+		PlayAllButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+		PlayAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(icon_play)));
+
+		PlayAllButton.setRequestFocusEnabled(false);
+		PlayAllButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				PlayAllButtonActionPerformed(evt);
+			}
+		});
+
+		org.jdesktop.layout.GroupLayout NotificationsPanelLayout = new org.jdesktop.layout.GroupLayout(
+				NotificationsPanel);
+		NotificationsPanel.setLayout(NotificationsPanelLayout);
+		NotificationsPanelLayout.setHorizontalGroup(
+				NotificationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+						.add(NotificationsPanelLayout.createSequentialGroup().addContainerGap()
+								.add(NotificationsTextArea, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 502,
+										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.add(PlayAllButton).addContainerGap()));
+		NotificationsPanelLayout.setVerticalGroup(NotificationsPanelLayout
+				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(NotificationsPanelLayout.createSequentialGroup().addContainerGap()
+						.add(NotificationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+								.add(NotificationsPanelLayout.createSequentialGroup().add(PlayAllButton).add(0, 0,
+										Short.MAX_VALUE))
+								.add(NotificationsTextArea, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 109,
+										Short.MAX_VALUE))
+						.addContainerGap()));
+
+		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(
+				org.jdesktop.layout.GroupLayout.TRAILING,
+				layout.createSequentialGroup().addContainerGap()
+						.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+								.add(NotificationsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.add(org.jdesktop.layout.GroupLayout.LEADING, ScenariosPanel,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.add(ConnectionPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))));
+		layout.setVerticalGroup(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(layout
+				.createSequentialGroup().addContainerGap()
+				.add(ConnectionPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+				.add(ScenariosPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+				.add(NotificationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+				.addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+
+		ScenariosPanel.getAccessibleContext().setAccessibleDescription("");
+		NotificationsPanel.getAccessibleContext().setAccessibleDescription("");
+
+		pack();
+	}// </editor-fold>//GEN-END:initComponents
+
+	private void TECSServerIPAddressTextFieldActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_TECSServerIPAddressTextFieldActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_TECSServerIPAddressTextFieldActionPerformed
+
+	private void ConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_ConnectButtonActionPerformed
+		// TODO add your handling code here:
+		tecsserver = TECSServerIPAddressTextField.getText();
+		tecsPort = Integer.parseInt(TECSServerPortTextField.getText());
+
+		if (!connectedtoTECS) {
+			connectToTECS(tecsserver, clientName, tecsPort);
+		} else
+			disconnectToTECS();
+
+	}// GEN-LAST:event_ConnectButtonActionPerformed
+
+	private void TECSServerPortTextFieldActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_TECSServerPortTextFieldActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_TECSServerPortTextFieldActionPerformed
+
+	private void BehaviourComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox1ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox1ActionPerformed
+
+	private void MultiTabComponentShown(java.awt.event.ComponentEvent evt) {// GEN-FIRST:event_MultiTabComponentShown
+		// TODO add your handling code here:
+	}// GEN-LAST:event_MultiTabComponentShown
+
+	private void PlayAllButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_PlayAllButtonActionPerformed
+
+		String[] output = reachToTabElements(MultiTab.getSelectedIndex());
+
+		if (connectedtoTECS && finishedEvent) {
+			PlayAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(icon_playing)));
+
+			sendBehavior(output[0], output[1], 0);
+			finishedEvent = false;
+		}
+
+	}// GEN-LAST:event_PlayAllButtonActionPerformed
+
+	private void BehaviourComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox2ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox2ActionPerformed
+
+	private void BehaviourComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox3ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox3ActionPerformed
+
+	private void BehaviourComboBox4ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox4ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox4ActionPerformed
+
+	private void BehaviourComboBox5ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox5ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox5ActionPerformed
+
+	private void BehaviourComboBox6ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox6ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox6ActionPerformed
+
+	private void BehaviourComboBox7ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox7ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox7ActionPerformed
+
+	private void BehaviourComboBox8ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox8ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox8ActionPerformed
+
+	private void BehaviourComboBox9ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox9ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox9ActionPerformed
+
+	private void BehaviourComboBox10ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BehaviourComboBox10ActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_BehaviourComboBox10ActionPerformed
+
+	/**
+	 * @param args
+	 *            the command line arguments
+	 */
+	public static void main(String args[]) {
+		/* Set the Nimbus look and feel */
+		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
+		// code (optional) ">
+		/*
+		 * If Nimbus (introduced in Java SE 6) is not available, stay with the
+		 * default look and feel. For details see
+		 * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.
+		 * html
+		 */
+		try {
+			javax.swing.UIManager.LookAndFeelInfo[] installedLookAndFeels = javax.swing.UIManager
+					.getInstalledLookAndFeels();
+			for (int idx = 0; idx < installedLookAndFeels.length; idx++)
+				if ("Nimbus".equals(installedLookAndFeels[idx].getName())) {
+					javax.swing.UIManager.setLookAndFeel(installedLookAndFeels[idx].getClassName());
+					break;
+				}
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		}
+		// </editor-fold>
+		// </editor-fold>
+		// </editor-fold>
+		// </editor-fold>
+
+		/* Create and display the form */
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				new UI().setVisible(true);
+			}
+		});
+	}
+
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JComboBox BehaviourComboBox1;
+	private javax.swing.JComboBox BehaviourComboBox10;
+	private javax.swing.JComboBox BehaviourComboBox2;
+	private javax.swing.JComboBox BehaviourComboBox3;
+	private javax.swing.JComboBox BehaviourComboBox4;
+	private javax.swing.JComboBox BehaviourComboBox5;
+	private javax.swing.JComboBox BehaviourComboBox6;
+	private javax.swing.JComboBox BehaviourComboBox7;
+	private javax.swing.JComboBox BehaviourComboBox8;
+	private javax.swing.JComboBox BehaviourComboBox9;
+	private javax.swing.JButton ConnectButton;
+	private javax.swing.JPanel ConnectionPanel;
+	private javax.swing.JTabbedPane MultiTab;
+	private javax.swing.JPanel NotificationsPanel;
+	private java.awt.TextArea NotificationsTextArea;
+	private javax.swing.JButton PlayAllButton;
+	private javax.swing.JPanel ScenariosPanel;
+	private javax.swing.JTextField TECSServerIPAddressTextField;
+	private javax.swing.JTextField TECSServerPortTextField;
+	private javax.swing.JTextArea TextToSpeechTextArea1;
+	private javax.swing.JTextArea TextToSpeechTextArea10;
+	private javax.swing.JTextArea TextToSpeechTextArea2;
+	private javax.swing.JTextArea TextToSpeechTextArea3;
+	private javax.swing.JTextArea TextToSpeechTextArea4;
+	private javax.swing.JTextArea TextToSpeechTextArea5;
+	private javax.swing.JTextArea TextToSpeechTextArea6;
+	private javax.swing.JTextArea TextToSpeechTextArea7;
+	private javax.swing.JTextArea TextToSpeechTextArea8;
+	private javax.swing.JTextArea TextToSpeechTextArea9;
+	private javax.swing.JLabel jLabel1;
+	private javax.swing.JLabel jLabel10;
+	private javax.swing.JLabel jLabel11;
+	private javax.swing.JLabel jLabel12;
+	private javax.swing.JLabel jLabel13;
+	private javax.swing.JLabel jLabel14;
+	private javax.swing.JLabel jLabel15;
+	private javax.swing.JLabel jLabel16;
+	private javax.swing.JLabel jLabel17;
+	private javax.swing.JLabel jLabel18;
+	private javax.swing.JLabel jLabel19;
+	private javax.swing.JLabel jLabel2;
+	private javax.swing.JLabel jLabel20;
+	private javax.swing.JLabel jLabel21;
+	private javax.swing.JLabel jLabel22;
+	private javax.swing.JLabel jLabel23;
+	private javax.swing.JLabel jLabel24;
+	private javax.swing.JLabel jLabel25;
+	private javax.swing.JLabel jLabel26;
+	private javax.swing.JLabel jLabel27;
+	private javax.swing.JLabel jLabel28;
+	private javax.swing.JLabel jLabel9;
+	private javax.swing.JPanel jPanel11;
+	private javax.swing.JPanel jPanel12;
+	private javax.swing.JPanel jPanel13;
+	private javax.swing.JPanel jPanel14;
+	private javax.swing.JPanel jPanel15;
+	private javax.swing.JPanel jPanel16;
+	private javax.swing.JPanel jPanel17;
+	private javax.swing.JPanel jPanel18;
+	private javax.swing.JPanel jPanel19;
+	private javax.swing.JPanel jPanel20;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JScrollPane jScrollPane10;
+	private javax.swing.JScrollPane jScrollPane2;
+	private javax.swing.JScrollPane jScrollPane3;
+	private javax.swing.JScrollPane jScrollPane4;
+	private javax.swing.JScrollPane jScrollPane5;
+	private javax.swing.JScrollPane jScrollPane6;
+	private javax.swing.JScrollPane jScrollPane7;
+	private javax.swing.JScrollPane jScrollPane8;
+	private javax.swing.JScrollPane jScrollPane9;
+	// End of variables declaration//GEN-END:variables
+
+}
